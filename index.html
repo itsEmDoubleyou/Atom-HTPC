@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medialauncher</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <script src="marquee.js" defer></script>
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur (zum Umbenennen von Ordnern) muss ihre Tasten-Handler VOR script.js registrieren,
+       damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="home-model.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="home-folders.js" defer></script>
+</head>
+<body>
+  <script>
+    // fade-in nur zuschalten, wenn wir NICHT gerade aus einer minimierten App
+    // zurückkommen - dort soll der Hintergrund direkt sichtbar sein, ohne den
+    // kurzen "von schwarz aufhellen"-Effekt. Inline + ganz am Anfang von body,
+    // damit die Klasse (falls gewünscht) auftaucht, bevor überhaupt was gemalt wird.
+    if (!new URLSearchParams(location.search).has('noFadeIn')) {
+      document.body.classList.add('fade-in');
+    }
+  </script>
+  <!-- Hintergrund bleibt immer bestehen, egal ob Dock oder weitere Apps zu sehen sind -->
+  <div id="background"></div>
+  <!-- Wird gezeigt, wenn eine App keinen eigenen Hintergrund hat: Logo zentriert auf Schwarz -->
+  <img id="background-logo" alt="" />
+
+  <!-- Dock (max. 6 Apps) + weitere Apps darunter, wächst per JS in der Höhe -->
+  <div class="apps-viewport" id="apps-viewport">
+    <div class="apps-stack" id="apps-stack">
+      <div class="dock" id="dock"></div>
+      <div class="extra-grid" id="extra-grid"></div>
+      <!-- Einfüge-Marke im Verschieben-Modus: dünner Strich an der Stelle, an der die angehobene App landet -->
+      <div class="move-bar" id="move-bar" hidden></div>
+    </div>
+  </div>
+
+  <!-- Geöffneter Ordner: wächst aus seiner Kachel in die Bildschirmmitte (script.js baut Titel und Apps auf) -->
+  <div class="folder-layer" id="folder-layer" hidden>
+    <div class="folder-backdrop" id="folder-backdrop"></div>
+    <div class="folder-panel" id="folder-panel">
+      <div class="folder-content" id="folder-content">
+        <input id="folder-title" class="folder-title" type="text" maxlength="40" autocomplete="off" spellcheck="false" tabindex="-1" aria-label="Ordnername" />
+        <div class="folder-grid" id="folder-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App-Menü (langes Enter auf einer App/einem Ordner): script.js legt die Karten hier an -->
+  <div class="am-layer" id="app-menu-layer" hidden></div>
+
+  <!-- Topshelf: Hinweis-Pfeil + Vorschau-Karten, erscheinen beim Fokussieren einer
+       Dock-App mit aktiviertem Topshelf, Position wird per JS über dem Dock gesetzt -->
+  <div id="topshelf-hint" class="topshelf-hint">
+    <svg class="topshelf-hint-arrow" viewBox="0 0 48 22" width="40" height="18">
+      <polyline points="3,20 24,9 45,20" fill="none" stroke="#c4c4c4" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+  <div id="topshelf-cards" class="topshelf-cards">
+    <div id="topshelf-cards-track" class="topshelf-cards-track"></div>
+  </div>
+
+  <!-- Bildschirmschoner als Ebene (script.js baut hier seinen Rahmen auf): über allem, aber unter dem Schnellmenü -->
+  <div id="screensaver-layer" hidden></div>
+
+  <!-- Uhr + Schnellmenü: EIN gemeinsamer Glas-Rahmen, immer sichtbar (zeigt im
+       Ruhezustand nur die Uhrzeit), wächst beim Aktivieren (S halten) nach
+       unten UND zur Seite auf und zeigt zusätzlich Wochentag + Buttons. -->
+  <div id="quick-menu">
+    <!-- Kopfzeile: links Wochentag + Uhrzeit, rechts Eingabegerät/Netzwerk (nur Symbole), Steuerzentrale (Startseite des Schnellmenüs) und
+         Profil. Im Ruhezustand stehen nur Uhrzeit und Profil (groß) in der Zeile; beim Öffnen gleiten Uhr und Profil an ihren Platz, der
+         Wochentag, die Symbole und der Steuerzentrale-Knopf blenden ein. Die Knöpfe sind wie Reiter: der der aktuellen Ansicht ist hervorgehoben. -->
+    <div class="quick-menu-header">
+      <div class="quick-menu-clock">
+        <span id="clock-weekday" class="clock-weekday"></span>
+        <span id="clock-time" class="clock-time"></span>
+      </div>
+      <div class="quick-menu-header-right">
+        <div class="quick-menu-status-icons" aria-hidden="true">
+          <span id="device-indicator-btn" class="status-icon device-indicator" title="Eingabegerät">
+            <svg id="device-icon-keyboard" class="device-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.5" y="6" width="19" height="12" rx="2.2"/>
+            <line x1="6" y1="10" x2="6.01" y2="10"/>
+            <line x1="9" y1="10" x2="9.01" y2="10"/>
+            <line x1="12" y1="10" x2="12.01" y2="10"/>
+            <line x1="15" y1="10" x2="15.01" y2="10"/>
+            <line x1="18" y1="10" x2="18.01" y2="10"/>
+            <line x1="7" y1="14.5" x2="17" y2="14.5"/>
+          </svg>
+          <svg id="device-icon-gamepad" class="device-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M6.5 8h11a4 4 0 0 1 3.9 4.9l-.7 3a3 3 0 0 1-5.1 1.4L14 15.5h-4l-1.6 1.8a3 3 0 0 1-5.1-1.4l-.7-3A4 4 0 0 1 6.5 8z"/>
+            <line x1="7" y1="11.5" x2="7" y2="13.5"/>
+            <line x1="6" y1="12.5" x2="8" y2="12.5"/>
+            <circle cx="16" cy="11.5" r="0.9" fill="white" stroke="none"/>
+            <circle cx="18.2" cy="13.5" r="0.9" fill="white" stroke="none"/>
+          </svg>
+          <!-- Handy-Fernbedienung: erscheint, solange das Handy das zuletzt benutzte Eingabegerät ist -->
+          <svg id="device-icon-remote" class="device-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/>
+            <line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/>
+          </svg>
+          </span>
+            <!-- Netzwerk: LAN, WLAN (Punkt + drei Bögen, je nach Signalstärke gefüllt) oder keine Verbindung (durchgestrichen).
+               Vor der ersten Antwort bleibt der Platz leer. -->
+          <span id="network-indicator-btn" class="status-icon network-indicator" data-type="">
+            <svg id="net-icon-lan" class="device-icon net-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <rect x="9" y="2.5" width="6" height="5.5" rx="1.2"/>
+            <rect x="2" y="16" width="6" height="5.5" rx="1.2"/>
+            <rect x="16" y="16" width="6" height="5.5" rx="1.2"/>
+            <path d="M12 8v4.5M5 16v-2.3a1.2 1.2 0 0 1 1.2-1.2h11.6a1.2 1.2 0 0 1 1.2 1.2V16"/>
+          </svg>
+          <svg id="net-icon-wifi" class="device-icon net-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="19.2" r="1.5" fill="white" stroke="none"/>
+            <path id="net-arc-1" class="net-arc" d="M9.1 16.4A4.1 4.1 0 0 1 14.9 16.4"/>
+            <path id="net-arc-2" class="net-arc" d="M6.3 13.6A8 8 0 0 1 17.7 13.6"/>
+            <path id="net-arc-3" class="net-arc" d="M3.5 10.8A12 12 0 0 1 20.5 10.8"/>
+          </svg>
+          <svg id="net-icon-off" class="device-icon net-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="19.2" r="1.5" fill="white" stroke="none" opacity="0.45"/>
+            <path d="M9.1 16.4A4.1 4.1 0 0 1 14.9 16.4" opacity="0.45"/>
+            <path d="M6.3 13.6A8 8 0 0 1 17.7 13.6" opacity="0.45"/>
+            <path d="M3.5 10.8A12 12 0 0 1 20.5 10.8" opacity="0.45"/>
+            <line x1="4" y1="3.5" x2="20" y2="21"/>
+          </svg>
+          </span>
+        </div>
+
+        <button id="home-btn" class="round-icon-btn top-tab-btn" title="Startseite" aria-label="Startseite des Schnellmenüs">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M13.9 4.5H5a2.5 2.5 0 0 0 0 5h8.9"/>
+            <circle cx="16.5" cy="7" r="3.6"/>
+            <path d="M10.1 14.5H19a2.5 2.5 0 0 1 0 5h-8.9"/>
+            <circle cx="7.5" cy="17" r="3.6"/>
+          </svg>
+        </button>
+        <button id="profile-btn" class="round-icon-btn top-tab-btn profile-btn" title="Profil wechseln" aria-label="Profil wechseln">
+          <span id="profile-btn-avatar" class="profile-avatar profile-btn-avatar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="quick-menu-buttons-row">
+      <button id="volume-btn" class="round-icon-btn" title="Lautstärke" aria-label="Lautstärkemixer">🔊</button>
+      <button id="media-btn" class="round-icon-btn media-btn" title="Medienwiedergabe steuern" aria-label="Medienwiedergabe steuern">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18V6l10-2v12"/>
+          <circle cx="6.5" cy="18" r="2.5"/>
+          <circle cx="16.5" cy="16" r="2.5"/>
+        </svg>
+      </button>
+      <button id="settings-btn" class="round-icon-btn" title="Einstellungen">⚙</button>
+      <button id="power-btn" class="round-icon-btn" title="Ausschalten / Neustarten" aria-label="Ausschalten oder Neustarten">⏻</button>
+    </div>
+
+    <!-- Mixer-Modus: Lautstärke der geöffneten Apps direkt im Schnellmenü (Rahmen wächst nach unten; Zurück: B / Backspace) -->
+    <div class="quick-mixer-panel" id="quick-mixer-panel">
+      <div class="qx-list" id="qx-list"></div>
+    </div>
+
+    <!-- Profil-Modus: Profil wählen (Zurück: B / Backspace); die Felder baut script.js beim Öffnen -->
+    <div class="quick-profile-panel" id="quick-profile-panel"></div>
+
+    <!-- Power-Modus: Beenden oder Neustart (Zurück: B / Backspace) -->
+    <div class="quick-power-panel" id="quick-power-panel">
+      <button id="qp-quit" class="round-icon-btn qp-btn" title="Programm beenden" aria-label="Programm beenden">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v8"/>
+          <path d="M7.2 6.6a8 8 0 1 0 9.6 0"/>
+        </svg>
+      </button>
+      <button id="qp-restart" class="round-icon-btn qp-btn" title="Programm neu starten" aria-label="Programm neu starten">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 12a8 8 0 1 1-2.6-5.9"/>
+          <path d="M20.2 3.6v4.6h-4.6"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Medien-Modus: ersetzt Uhr und Buttons, solange der Musikplayer-Button aktiv ist (Zurück: B / Backspace) -->
+    <div class="quick-media-panel" id="quick-media-panel">
+      <!-- Titel – Interpret, mittig über dem Balken (zu lang: Laufschrift) -->
+      <div id="qm-title" class="qm-title empty"><span></span></div>
+      <div class="qm-progress-row">
+        <span id="qm-current" class="qm-time">0:00</span>
+        <div id="qm-track" class="qm-track" tabindex="-1" role="slider" aria-label="Wiedergabeposition" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+          <div class="qm-bar"><div id="qm-fill" class="qm-fill"></div></div>
+          <div id="qm-thumb" class="qm-thumb"></div>
+        </div>
+        <span id="qm-duration" class="qm-time">0:00</span>
+      </div>
+      <div class="qm-controls">
+        <button id="qm-prev" class="round-icon-btn qm-btn" title="Zurück" aria-label="Zurück">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.6" y="5.2" width="2.6" height="13.6" rx="1.2"/><path d="M19 6.2v11.6L9.4 12z"/></svg>
+        </button>
+        <button id="qm-play" class="round-icon-btn qm-btn qm-btn-main" title="Wiedergabe / Pause" aria-label="Wiedergabe / Pause">
+          <svg id="qm-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 4.8v14.4L19.2 12z"/></svg>
+          <svg id="qm-icon-pause" viewBox="0 0 24 24" aria-hidden="true" hidden><rect x="5.6" y="4.8" width="4.4" height="14.4" rx="1.4"/><rect x="14" y="4.8" width="4.4" height="14.4" rx="1.4"/></svg>
+        </button>
+        <button id="qm-next" class="round-icon-btn qm-btn" title="Weiter" aria-label="Weiter">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="16.8" y="5.2" width="2.6" height="13.6" rx="1.2"/><path d="M5 6.2v11.6L14.6 12z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

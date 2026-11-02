@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adblocker</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="adblocker.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Adblocker</h1>
+    <p class="manage-hint">Blockiert Werbung und Tracker in gestarteten Apps mit uBlock-Origin-kompatiblen Filterlisten.</p>
+
+    <div class="adblocker-row">
+      <span>Adblocker aktiviert</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="adblocker-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <p class="adblocker-restart-note" id="adblocker-restart-note"></p>
+
+    <div class="general-section">
+      <label>Filterlisten</label>
+      <p class="key-hint" id="adblock-lists-info">Wird geladen …</p>
+      <p class="key-hint">Die Listen kommen direkt von uBlock Origin und EasyList und werden automatisch erneuert, sobald sie älter als einen Tag sind.</p>
+      <button type="button" class="settings-btn" id="adblock-lists-refresh">Filterlisten jetzt aktualisieren</button>
+      <p class="key-hint" id="adblock-lists-status"></p>
+    </div>
+
+    <div class="general-section">
+      <label for="adblock-allow-input">Ausnahmen: Seiten ohne Adblocker</label>
+      <p class="key-hint">Auf diesen Seiten wird nichts blockiert oder ausgeblendet. Gilt sofort, ohne Neustart - für Seiten, die mit Adblocker nicht laufen.</p>
+      <div class="image-source-row">
+        <input type="text" id="adblock-allow-input" placeholder="z.B. disneyplus.com" autocomplete="off" spellcheck="false" />
+        <button type="button" id="adblock-allow-add">Hinzufügen</button>
+      </div>
+      <p class="key-hint" id="adblock-allow-hint"></p>
+      <div class="adblock-allow-list" id="adblock-allow-list"></div>
+    </div>
+
+    <div class="adblocker-row">
+      <span>Protokoll schreiben (Fehlersuche)</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="adblocker-log-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <p class="key-hint">Schreibt blockierte und umgeleitete Anfragen, eingesetzte Skripte und Fehlermeldungen der Seiten in eine Datei:</p>
+    <p class="key-hint" id="adblock-log-path"></p>
+    <button type="button" class="settings-btn" id="adblock-log-open">Ordner mit dem Protokoll öffnen</button>
+
+    <div class="general-section adblock-layers">
+      <label>Fehlersuche: Bereiche einzeln ausschalten</label>
+      <p class="key-hint">Wenn eine Seite nicht lädt: hier einen Bereich ausschalten und die Seite neu öffnen. Gilt sofort, ohne Neustart.</p>
+    </div>
+    <div class="adblocker-row">
+      <span>Anfragen blockieren</span>
+      <label class="toggle-switch"><input type="checkbox" id="adblocker-layer-network" /><span class="toggle-slider"></span></label>
+    </div>
+    <div class="adblocker-row">
+      <span>Sicherheitsrichtlinien der Listen (CSP)</span>
+      <label class="toggle-switch"><input type="checkbox" id="adblocker-layer-headers" /><span class="toggle-slider"></span></label>
+    </div>
+    <div class="adblocker-row">
+      <span>Elemente ausblenden</span>
+      <label class="toggle-switch"><input type="checkbox" id="adblocker-layer-styles" /><span class="toggle-slider"></span></label>
+    </div>
+    <div class="adblocker-row">
+      <span>uBlock-Skripte (z.B. gegen YouTube-Werbung)</span>
+      <label class="toggle-switch"><input type="checkbox" id="adblocker-layer-scripts" /><span class="toggle-slider"></span></label>
+    </div>
+    <div class="adblocker-row">
+      <span>davon: Skripte, die die Seite umbauen (u.a. gegen die YouTube-Erkennung)</span>
+      <label class="toggle-switch"><input type="checkbox" id="adblocker-layer-structure" /><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+
+</body>
+</html>

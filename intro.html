@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Intro</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="intro.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Intro</h1>
+    <p class="manage-hint">Beim Start des Medienlaunchers wird das Video videos/intro/intro.mp4 sanft eingeblendet und nach 4 Sekunden sanft wieder ausgeblendet. Ohne diese Datei gibt es kein Intro.</p>
+
+    <div class="adblocker-row">
+      <span>Intro beim Start</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="intro-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <p class="slider-hint" id="intro-hint"></p>
+
+    <button type="button" id="intro-preview" class="settings-btn">Vorschau</button>
+  </div>
+
+</body>
+</html>

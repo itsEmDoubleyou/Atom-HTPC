@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lautstärke</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; cursor: none; user-select: none; }
+    /* Dunkle, abgerundete Platte (hebt den weißen Regler auf hellen Inhalten ab) mit Lautsprecher-Symbol und senkrechtem Regler */
+    #panel {
+      position: absolute; inset: 0;
+      box-sizing: border-box;
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 22px 0 24px;
+      border-radius: 28px;
+      background: rgba(24, 24, 24, 0.55);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      backdrop-filter: blur(18px) saturate(140%);
+      opacity: 0; transform: translateX(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #panel.show { opacity: 1; transform: none; }
+    #icon { width: 30px; height: 30px; flex: none; }
+    #icon path, #icon line { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #icon .body { fill: #fff; }
+    #track {
+      position: relative; flex: 1; width: 18px; margin-top: 16px;
+      border-radius: 9px; background: rgba(255, 255, 255, 0.28); overflow: hidden;
+    }
+    #fill {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 0%;
+      border-radius: 9px; background: #fff;
+      transition: height 0.12s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div id="panel">
+    <svg id="icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path class="body" d="M4 9.5h3.2L11.5 6v12l-4.3-3.5H4z"/>
+      <path id="wave1" d="M14.6 9.4a3.6 3.6 0 0 1 0 5.2"/>
+      <path id="wave2" d="M17 7a7 7 0 0 1 0 10"/>
+      <line id="cross1" x1="15" y1="9.5" x2="20" y2="14.5"/>
+      <line id="cross2" x1="20" y1="9.5" x2="15" y2="14.5"/>
+    </svg>
+    <div id="track"><div id="fill"></div></div>
+  </div>
+  <script>
+    const panel = document.getElementById('panel');
+    const fill = document.getElementById('fill');
+    const set = (id, show) => { document.getElementById(id).style.display = show ? '' : 'none'; };
+    function render(level) {
+      const pct = Math.max(0, Math.min(100, Number(level) || 0));
+      fill.style.height = pct + '%';
+      document.body.dataset.level = String(pct);
+      set('wave1', pct > 0); set('wave2', pct > 50);
+      set('cross1', pct === 0); set('cross2', pct === 0);
+    }
+    render(0);
+    if (window.volumeOverlayAPI) {
+      window.volumeOverlayAPI.onLevel((data) => { render(data && data.level); panel.classList.add('show'); });
+      window.volumeOverlayAPI.onHide(() => panel.classList.remove('show'));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speicher &amp; Daten</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="storage.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel storage-panel">
+    <h1 class="menu-title">Speicher &amp; Daten</h1>
+    <p class="manage-hint" id="storage-hint">Gilt für das aktive Profil.</p>
+
+    <div class="storage-row">
+      <div class="storage-text">
+        <div class="storage-title">Cache leeren</div>
+        <div class="storage-desc">Zwischengespeicherte Webseiten-Daten aller Apps. Anmeldungen bleiben erhalten.</div>
+        <div class="storage-size" id="size-cache">&nbsp;</div>
+      </div>
+      <button type="button" class="profile-delete" id="btn-cache">Leeren</button>
+    </div>
+
+    <div class="storage-row">
+      <div class="storage-text">
+        <div class="storage-title">Cookies &amp; Anmeldungen löschen</div>
+        <div class="storage-desc">Alle Apps dieses Profils werden abgemeldet und beendet.</div>
+        <div class="storage-size" id="size-data">&nbsp;</div>
+      </div>
+      <button type="button" class="profile-delete" id="btn-data">Löschen</button>
+    </div>
+
+    <div class="storage-row">
+      <div class="storage-text">
+        <div class="storage-title">Einzelne App zurücksetzen</div>
+        <div class="storage-desc">Meldet nur diese App ab und löscht ihre gespeicherten Daten. Sie wird beendet.</div>
+        <select id="storage-app" aria-label="App wählen"></select>
+      </div>
+      <button type="button" class="profile-delete" id="btn-app">Zurücksetzen</button>
+    </div>
+
+    <div class="storage-row">
+      <div class="storage-text">
+        <div class="storage-title">TMDb-Daten neu laden</div>
+        <div class="storage-desc">Verwirft Topshelf-Karten, Logos und Bilder des Bildschirmschoners. Sie werden beim nächsten Bedarf neu geholt.</div>
+      </div>
+      <button type="button" class="profile-delete" id="btn-tmdb">Neu laden</button>
+    </div>
+
+    <p class="storage-status" id="storage-status" role="status" aria-live="polite"></p>
+  </div>
+
+</body>
+</html>

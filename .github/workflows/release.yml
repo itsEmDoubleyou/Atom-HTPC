@@ -1,0 +1,56 @@
+name: Release
+
+# Baut bei einem Versions-Tag (z.B. v0.1.0-beta.1) Windows (Installer + portable) und Linux (AppImage)
+# und legt sie als Vorabversion im Bereich "Releases" ab. Manuell startbar über "Run workflow" (nur Build, ohne Release).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist:win
+          - os: ubuntu-latest
+            script: dist:linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Abhängigkeiten installieren
+        run: npm install --no-audit --no-fund
+      - name: Bauen
+        run: npm run ${{ matrix.script }}
+      - name: Ergebnis als Artefakt sichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: atom-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.AppImage
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Release anlegen
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          prerelease: true
+          generate_release_notes: true

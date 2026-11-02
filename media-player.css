@@ -1,0 +1,370 @@
+/* Musikplayer: Glasleiste. Alle Maße in rem; 1rem = 10px bei der Standardgröße 300x150, bei anderer Fenstergröße
+   wächst/schrumpft alles mit der kleineren Seite (der Balken füllt zusätzlich die Breite). */
+html {
+  font-size: min(calc(100vw / 30), calc(100vh / 15));
+  background: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Glas-Stil des Schnellmenüs (#quick-menu in style.css), Wert für Wert übernommen: grau 40/40/40 mit 55 % Deckkraft,
+   Rand 1,5px rgba(200,200,200,.12), Radius 24px, Blur 24px + Sättigung 140 %. Ohne Hover-Wechsel, wie das Schnellmenü.
+   (Das Blur wirkt nur, wo ein eigenes Fenster den Hintergrund mitblurren darf; sonst trägt die Deckkraft allein.) */
+.glass {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(40, 40, 40, 0.55);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1.5px solid rgba(200, 200, 200, 0.12);
+  cursor: default;
+}
+
+/* Aufbau ohne Bild: nur der Bedienblock. Mit Bild (html.with-picture) füllt das Bild das ganze Fenster (das Fenster hat das
+   Seitenverhältnis des Bildes und skaliert mit), die Bedienelemente liegen darüber und blenden sich aus, wenn weder Maus
+   noch Controller benutzt werden (Klasse "awake" am Player, siehe media-player.js). */
+.glass { display: flex; flex-direction: column; }
+html.with-picture { font-size: min(calc(100vw / 42), calc(100vh / 24)); }
+
+.mp-picture {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mp-picture[hidden] { display: none; }
+.mp-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.mp-img[hidden] { display: none; }
+.mp-placeholder {
+  width: 28%;
+  max-width: 6rem;
+  height: auto;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mp-placeholder[hidden] { display: none; }
+
+.mp-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 1.1rem 2rem 0; /* unten bleibt Platz für die Größentasten */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.8rem;
+}
+
+/* Bedienelemente über dem Bild: unten auf einem Verlauf, kompakter als ohne Bild */
+.with-picture .mp-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  flex: none;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  padding: 3.2rem 1.8rem 1.2rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  transition: opacity 0.3s ease;
+}
+.with-picture .mp-controls { gap: 2.2rem; }
+.with-picture .mp-btn { width: 3.2rem; height: 3.2rem; }
+.with-picture .mp-btn-main { width: 4.2rem; height: 4.2rem; }
+.with-picture .mp-btn svg { width: 1.7rem; height: 1.7rem; }
+.with-picture .mp-btn-main svg { width: 2.3rem; height: 2.3rem; }
+.with-picture .mp-time { font-size: 1.05rem; }
+.with-picture .mp-corner { transition: opacity 0.3s ease, transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
+
+/* Ausgeblendet, solange Maus und Controller ruhen (die Klasse "awake" setzt media-player.js bei jeder Eingabe) */
+.with-picture #player:not(.awake) { cursor: none; }
+.with-picture #player:not(.awake) .mp-body,
+.with-picture #player:not(.awake) .mp-sizes,
+.with-picture #player:not(.awake) .mp-corner {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Titel (über dem Balken, mittig; zu lang: Laufschrift siehe marquee.js) ---------- */
+.mp-title {
+  flex: none;
+  box-sizing: border-box;
+  height: 1.6rem;
+  margin: 0 1.4rem;          /* hält Abstand zu den Ecken-Knöpfen */
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 1.25rem;
+  line-height: 1.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 0.1rem 0.4rem rgba(0, 0, 0, 0.5);
+}
+.mp-title > span { display: inline-block; will-change: transform; }
+.mp-title.scrolling {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.with-picture .mp-title { font-size: 1.15rem; margin: 0 0.6rem; }
+
+/* ---------- Fortschritt ---------- */
+.mp-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.mp-time {
+  flex: none;
+  min-width: 3.2rem;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.01em;
+}
+.mp-time:first-child { text-align: right; }
+.mp-time:last-child { text-align: left; }
+
+/* großzügige Klickfläche, der sichtbare Balken ist dünn */
+.mp-track {
+  position: relative;
+  flex: 1;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.mp-bar {
+  position: relative;
+  width: 100%;
+  height: 0.45rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+}
+
+.mp-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: #ffffff; /* Akzentfarbe: weiß */
+  border-radius: 0.3rem;
+  transition: width 0.4s linear;
+}
+
+.mp-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin: -0.65rem 0 0 -0.65rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0.6rem rgba(255, 255, 255, 0.45), 0 0.1rem 0.3rem rgba(0, 0, 0, 0.4);
+  transition: left 0.4s linear, transform 0.15s ease;
+  pointer-events: none;
+}
+
+.mp-track:hover .mp-thumb,
+.seeking .mp-thumb { transform: scale(1.18); }
+
+.seeking .mp-fill,
+.seeking .mp-thumb { transition: none; }
+
+/* ---------- Tasten: runde Glas-Buttons wie .round-icon-btn im Schnellmenü ---------- */
+.mp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.6rem;
+}
+
+.mp-btn,
+.mp-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: rgba(40, 40, 40, 0.45);
+  border: 1.5px solid rgba(200, 200, 200, 0.12);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.75;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.mp-btn { width: 3.8rem; height: 3.8rem; }
+.mp-btn-main { width: 5rem; height: 5rem; }
+
+.mp-btn svg {
+  width: 2rem;
+  height: 2rem;
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.mp-btn-main svg { width: 2.8rem; height: 2.8rem; }
+.mp-btn svg[hidden] { display: none; }
+
+.mp-btn:hover,
+.mp-corner:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+/* Der Player bekommt keinen Tastaturfokus: nach einem Klick soll ein fokussierter Knopf nicht hängen bleiben */
+.mp-btn:focus,
+.mp-corner:focus { outline: none; }
+.mp-btn:active,
+.mp-corner:active { transform: scale(0.96); }
+
+.mp-btn:disabled,
+.glass[data-state="idle"] .mp-btn {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+.glass[data-state="idle"] .mp-track { cursor: default; }
+.glass[data-state="idle"] .mp-thumb { opacity: 0; }
+
+/* ---------- Ecken: Video-Schalter (links) und Schließen (rechts), nur beim Hovern sichtbar ---------- */
+.mp-corner {
+  position: absolute;
+  top: 0.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  opacity: 0;
+  z-index: 3;
+}
+.mp-video { left: 0.8rem; }
+.mp-close { right: 0.8rem; }
+.glass:hover .mp-corner { opacity: 0.75; }
+.glass:hover .mp-corner:hover { opacity: 1; }
+
+.mp-corner svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Bildanzeige an: der Knopf bleibt sichtbar und hell, damit man den Zustand auch ohne Hover sieht */
+.mp-video.on {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.glass:hover .mp-video.on { opacity: 1; }
+
+/* ---------- Controller-Fokus ----------
+   Erscheint erst nach der ersten Controller-Eingabe (pad-active) und verschwindet, sobald die Maus benutzt wird.
+   Der fokussierte Knopf sieht aus wie ein überfahrener (hell, leicht vergrößert) plus weißer Ring. */
+.pad-active .mp-corner { opacity: 0.75; }
+.pad-focus {
+  opacity: 1 !important;
+  transform: scale(1.12);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+.mp-btn.pad-focus:disabled { opacity: 0.3 !important; }
+.mp-track.pad-focus {
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+.mp-track.pad-focus .mp-thumb {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.35), 0 0 0.8rem rgba(255, 255, 255, 0.6);
+}
+.mp-track.pad-focus .mp-bar { background: rgba(255, 255, 255, 0.4); }
+
+/* ---------- Größenwahl 1x / 2x / 3x (unten rechts) ---------- */
+.mp-sizes {
+  position: absolute;
+  right: 1.6rem;
+  bottom: 1.3rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.3rem;
+  transition: opacity 0.3s ease;
+}
+.mp-size {
+  min-width: 2.4rem;
+  height: 1.7rem;
+  padding: 0 0.4rem;
+  border-radius: 0.85rem;
+  font: 600 1rem/1 "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: rgba(40, 40, 40, 0.45);
+  border: 1.5px solid rgba(200, 200, 200, 0.12);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  opacity: 0.6;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.mp-size:hover { opacity: 1; transform: scale(1.08); }
+.mp-size:active { transform: scale(0.96); }
+.mp-size:focus { outline: none; }
+/* aktuelle Größe: hell, damit man sie auch ohne Hover sieht */
+.mp-size.on {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.with-picture .mp-sizes { bottom: 1rem; right: 1.4rem; }
+.with-picture .mp-size { font-size: 1.1rem; height: 1.8rem; border-radius: 0.9rem; }
+
+/* ---------- Zieh-Ränder zum Ändern der Größe ---------- */
+.mp-edge {
+  position: absolute;
+  z-index: 4;
+}
+.mp-edge-n  { top: 0; left: 14px; right: 14px; height: 6px; cursor: ns-resize; }
+.mp-edge-s  { bottom: 0; left: 14px; right: 14px; height: 6px; cursor: ns-resize; }
+.mp-edge-w  { left: 0; top: 14px; bottom: 14px; width: 6px; cursor: ew-resize; }
+.mp-edge-e  { right: 0; top: 14px; bottom: 14px; width: 6px; cursor: ew-resize; }
+.mp-edge-nw { top: 0; left: 0; width: 14px; height: 14px; cursor: nwse-resize; }
+.mp-edge-se { bottom: 0; right: 0; width: 14px; height: 14px; cursor: nwse-resize; }
+.mp-edge-ne { top: 0; right: 0; width: 14px; height: 14px; cursor: nesw-resize; }
+.mp-edge-sw { bottom: 0; left: 0; width: 14px; height: 14px; cursor: nesw-resize; }

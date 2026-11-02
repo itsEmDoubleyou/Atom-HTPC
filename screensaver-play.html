@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bildschirmschoner</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; cursor: none; }
+    #stage { position: fixed; inset: 0; background: #000; opacity: 0; transition: opacity 1.2s ease; }
+    #stage.on { opacity: 1; }
+    #stage.off { opacity: 0; transition-duration: 0.6s; }
+    video, #stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease; }
+    video.visible, #stage > img.visible { opacity: 1; }
+    /* Zusatzinfo (Pfeil runter), gleiche Darstellung wie im Vollbild-Topshelf: dunkler Verlauf, Logo/Titel und Beschreibung unten links */
+    #info-scrim { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s ease; pointer-events: none;
+      background:
+        linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.45) 100%),
+        linear-gradient(to right, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 55%); }
+    #info-scrim.show { opacity: 1; }
+    #info { position: absolute; left: 2cm; bottom: 2.4cm; max-width: 44%; color: white; font-family: Arial, sans-serif;
+      opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+    #info.show { opacity: 1; }
+    #info-logo { display: none; max-width: 320px; max-height: 110px; object-fit: contain; object-position: left bottom;
+      margin-bottom: 18px; filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.6)); }
+    #info-title { display: none; font-size: 2.2rem; font-weight: 800; margin-bottom: 14px; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+    #info-overview { margin: 0; font-size: 1.05rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <video id="v0" muted playsinline></video>
+    <video id="v1" muted playsinline></video>
+    <img id="i0" alt="" />
+    <img id="i1" alt="" />
+    <div id="info-scrim"></div>
+    <div id="info">
+      <img id="info-logo" alt="" />
+      <div id="info-title"></div>
+      <p id="info-overview"></p>
+    </div>
+  </div>
+  <script src="screensaver-play.js"></script>
+</body>
+</html>

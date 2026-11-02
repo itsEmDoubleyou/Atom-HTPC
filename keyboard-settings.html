@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tastatur</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur muss ihre Tasten-Handler VOR nav.js und dem
+       Seiten-Skript registrieren, damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="nav.js" defer></script>
+  <script src="keyboard-settings.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Tastatur</h1>
+    <p class="manage-hint">Die eigene Tastatur erscheint nur bei Controller-Nutzung: in diesen Einstellungen mit der A-Taste auf einem Textfeld, in Apps automatisch nach dem Anklicken eines Textfelds per Cursor (oder mit der Y-Taste). Alternativ lässt sich die Windows-Tastatur mit „K“ starten. Beide gleichzeitig sind nicht möglich: Das Einschalten der einen schaltet die andere aus.</p>
+
+    <div class="adblocker-row">
+      <span>Eigene Bildschirmtastatur (nur Controller)</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="own-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="adblocker-row">
+      <span>Windows-Bildschirmtastatur (optional, Taste „K“)</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="os-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="general-section" id="path-section" style="display: none;">
+      <label for="keyboard-path-input">Pfad zur Windows-Bildschirmtastatur</label>
+      <div class="image-source-row">
+        <input type="text" id="keyboard-path-input" placeholder="z.B. osk.exe" autocomplete="off" spellcheck="false" />
+        <button type="button" id="keyboard-path-save">Speichern</button>
+      </div>
+      <p class="key-hint" id="keyboard-path-hint"></p>
+    </div>
+  </div>
+
+</body>
+</html>

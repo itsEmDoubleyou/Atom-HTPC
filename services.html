@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dienste &amp; Schlüssel</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur muss ihre Tasten-Handler VOR nav.js und dem
+       Seiten-Skript registrieren, damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="nav.js" defer></script>
+  <script src="services.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Dienste &amp; Schlüssel</h1>
+    <p class="manage-hint">Hier werden Zugangsschlüssel für Online-Dienste hinterlegt. Der TMDb-API-Key liefert Filme und Serien für das Topshelf, die dynamischen App-Hintergründe und den Bildschirmschoner.</p>
+
+    <!-- TMDb-API-Key: Voraussetzung für dynamische App-Hintergründe, die TMDb-Suche, das Topshelf und den Bildschirmschoner -->
+    <div class="general-section" id="apikey-section">
+      <label for="tmdb-key-input">TMDb API-Key</label>
+      <div class="image-source-row">
+        <input type="text" id="tmdb-key-input" placeholder="Eigenen API-Key (v3) einfügen" autocomplete="off" spellcheck="false" />
+        <button type="button" id="tmdb-key-save">Speichern</button>
+      </div>
+      <p class="key-hint" id="tmdb-key-hint"></p>
+    </div>
+
+    <!-- So kommt man an einen Key -->
+    <div class="general-section" id="apikey-howto">
+      <label>So bekommst du einen kostenlosen Key</label>
+      <ol class="key-howto">
+        <li>Auf <strong>themoviedb.org</strong> (am PC oder Handy) ein kostenloses Konto anlegen und anmelden.</li>
+        <li>Dort unter Profilbild → <strong>Einstellungen → API</strong> einen API-Key beantragen (Verwendung: „Persönlich“, die Pflichtfelder kurz ausfüllen).</li>
+        <li>Den <strong>„API-Schlüssel“ (v3)</strong> kopieren, nicht das „API Read Access Token“, und oben einfügen. Mit der Bildschirmtastatur lässt er sich Zeichen für Zeichen eintippen.</li>
+        <li><strong>Speichern</strong> wählen: Der Key wird geprüft und gilt sofort.</li>
+      </ol>
+    </div>
+  </div>
+
+</body>
+</html>

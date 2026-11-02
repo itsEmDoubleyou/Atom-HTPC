@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tabs</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="tabs.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Tabs</h1>
+    <p class="manage-hint">Verhalten und Aussehen der Karten im App-Umschalter (Taste "A" halten)</p>
+
+    <div class="adblocker-row">
+      <span>Video im Hintergrund weiterspielen lassen</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="tabs-keep-playing-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <label for="tabs-size">Kartengröße</label>
+    <select id="tabs-size">
+      <option value="large">Groß</option>
+      <option value="small">Klein</option>
+    </select>
+
+    <div class="adblocker-row">
+      <span>Name zusätzlich zum Logo anzeigen</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="tabs-show-label-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <div></div>
+      <div class="form-actions-right">
+        <button type="button" id="general-save">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

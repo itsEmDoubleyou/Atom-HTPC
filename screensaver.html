@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bildschirmschoner</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="screensaver.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Bildschirmschoner</h1>
+    <p class="manage-hint">Zeigt nach einer Weile ohne Eingabe Videos, Bilder aktuell beliebter Filme oder einen schwarzen Bildschirm. Mit links/rechts (Pfeiltasten, Steuerkreuz, linker Stick) wechselt man zum vorigen oder nächsten Video bzw. Bild, bei den Filmbildern blendet runter die Info zum Film ein und wieder aus. Auf der Startseite öffnet das Halten der Bestätigen-Taste das Schnellmenü, ohne den Bildschirmschoner zu beenden. Jede andere Eingabe beendet ihn.</p>
+
+    <div class="adblocker-row">
+      <span>Bildschirmschoner aktiviert</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="screensaver-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <label>Anzeige</label>
+    <div class="mode-toggle">
+      <button type="button" class="mode-btn active" id="screensaver-mode-videos">Videos</button>
+      <button type="button" class="mode-btn" id="screensaver-mode-images">Bilder</button>
+      <button type="button" class="mode-btn" id="screensaver-mode-none">Keiner</button>
+    </div>
+    <p class="slider-hint" id="screensaver-mode-hint"></p>
+
+    <div class="slider-row">
+      <label for="screensaver-delay">Einsetzen nach</label>
+      <span class="slider-value" id="screensaver-delay-value">5 Minuten</span>
+    </div>
+    <input type="range" id="screensaver-delay" class="settings-slider" min="0" max="8" step="1" value="2" />
+    <p class="slider-hint">Gilt im Launcher und in den Einstellungen, nicht in einer laufenden App.</p>
+
+    <button type="button" id="screensaver-preview" class="settings-btn">Vorschau</button>
+  </div>
+
+</body>
+</html>

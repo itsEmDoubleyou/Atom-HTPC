@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uhrzeit</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="time.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Uhrzeit</h1>
+    <p class="manage-hint">Format, Zeitzone und Wochentag-Anzeige der Uhr auf der Startseite</p>
+
+    <label for="clock-format">Format</label>
+    <select id="clock-format">
+      <option value="24h">24-Stunden (14:30)</option>
+      <option value="12h">12-Stunden (2:30 PM)</option>
+    </select>
+
+    <label for="clock-timezone">Zeitzone</label>
+    <select id="clock-timezone">
+      <option value="auto">Automatisch (Systemzeitzone)</option>
+      <option value="Europe/Berlin">Berlin</option>
+      <option value="Europe/London">London</option>
+      <option value="Europe/Paris">Paris</option>
+      <option value="Europe/Madrid">Madrid</option>
+      <option value="Europe/Rome">Rom</option>
+      <option value="Europe/Vienna">Wien</option>
+      <option value="Europe/Zurich">Zürich</option>
+      <option value="Europe/Moscow">Moskau</option>
+      <option value="America/New_York">New York</option>
+      <option value="America/Chicago">Chicago</option>
+      <option value="America/Los_Angeles">Los Angeles</option>
+      <option value="Asia/Tokyo">Tokio</option>
+      <option value="Asia/Shanghai">Shanghai</option>
+      <option value="Asia/Dubai">Dubai</option>
+      <option value="Australia/Sydney">Sydney</option>
+      <option value="UTC">UTC</option>
+    </select>
+
+    <div class="adblocker-row">
+      <span>Wochentag anzeigen</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="clock-weekday-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <label for="clock-weekday-format">Wochentag-Darstellung</label>
+    <select id="clock-weekday-format">
+      <option value="long">Lang (Donnerstag)</option>
+      <option value="short">Kurz (Do)</option>
+    </select>
+
+    <div class="form-actions">
+      <div></div>
+      <div class="form-actions-right">
+        <button type="button" id="general-save">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

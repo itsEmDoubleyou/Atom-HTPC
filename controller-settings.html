@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Controller</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="controller-settings.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="pad-layout">
+    <!-- Links: Vorlagen, Tastenbelegung (die Zeilen baut controller-settings.js), darunter die Regler -->
+    <div class="pad-left" id="pad-left">
+      <h1 class="menu-title">Controller</h1>
+      <p class="manage-hint">Hier legst du fest, welche Controller-Taste was auslöst. Nach „Ändern“ einfach die gewünschte Taste am Controller drücken; mit der Tastatur bricht die Rücktaste ab. Steuerkreuz, Sticks und die Trigger bleiben fest. Notausstieg: Select und Start 3 Sekunden gleichzeitig halten setzt alles auf Standard zurück.</p>
+
+      <div class="pad-section-title">Vorlage</div>
+      <div class="pad-presets" id="pad-presets"></div>
+      <p class="pad-status" id="pad-status" role="status" aria-live="polite"></p>
+
+      <div id="pad-actions"><!-- Gruppen und Zeilen --></div>
+
+      <div class="pad-section-title">Cursor &amp; Scrollen</div>
+      <div class="slider-row">
+        <label for="cursor-speed">Cursor-Geschwindigkeit</label>
+        <span class="slider-value" id="cursor-speed-value">100 %</span>
+      </div>
+      <input type="range" id="cursor-speed" class="settings-slider" min="30" max="300" step="10" value="100" />
+      <p class="slider-hint">Gilt für den Cursor in Apps (die Taste „Cursor an/aus“ schaltet ihn ein).</p>
+
+      <div class="slider-row">
+        <label for="scroll-speed">Scroll-Geschwindigkeit</label>
+        <span class="slider-value" id="scroll-speed-value">100 %</span>
+      </div>
+      <input type="range" id="scroll-speed" class="settings-slider" min="30" max="300" step="10" value="100" />
+      <p class="slider-hint">Gilt für das Scrollen in Apps mit den Triggern (RT runter, LT hoch).</p>
+
+      <button type="button" id="controller-reset" class="settings-btn">Regler auf Standard zurücksetzen</button>
+    </div>
+
+    <!-- Rechts: Beschreibung der gewählten Aktion und das große Controller-Symbol; die Taste der gewählten Aktion leuchtet -->
+    <div class="pad-right">
+      <div class="pad-info">
+        <h2 class="pad-info-title" id="pad-info-title">Tastenbelegung</h2>
+        <p class="pad-info-desc" id="pad-info-desc">Wähle links eine Aktion, um ihre Taste zu sehen und zu ändern.</p>
+      </div>
+      <svg id="pad-controller" class="pad-controller" viewBox="0 0 520 340" role="img" aria-label="Controller">
+        <!-- Schultertasten und Trigger (Trigger sind fest, nur zur Orientierung) -->
+        <rect class="pad-part pad-fixed" data-part="6" x="112" y="14" width="84" height="22" rx="9"/>
+        <rect class="pad-part pad-fixed" data-part="7" x="324" y="14" width="84" height="22" rx="9"/>
+        <path class="pad-part pad-btn" data-btn="4" d="M104 70 C104 52 118 42 138 42 L196 42 C204 42 208 48 206 56 L204 66 Z"/>
+        <path class="pad-part pad-btn" data-btn="5" d="M416 70 C416 52 402 42 382 42 L324 42 C316 42 312 48 314 56 L316 66 Z"/>
+        <text class="pad-label pad-label-fixed" x="154" y="30">LT</text>
+        <text class="pad-label" x="152" y="62">LB</text>
+        <text class="pad-label pad-label-fixed" x="366" y="30">RT</text>
+        <text class="pad-label" x="368" y="62">RB</text>
+        <!-- Gehäuse -->
+        <path class="pad-body" d="M150 68 C122 68 96 80 82 106 C62 142 34 232 34 264 C34 294 56 310 82 310 C106 310 122 296 142 284 C154 274 170 270 192 270 L328 270 C350 270 366 274 378 284 C398 296 414 310 438 310 C464 310 486 294 486 264 C486 232 458 142 438 106 C424 80 398 68 370 68 Z"/>
+        <!-- Mittlere Taste (nur Zierde) -->
+        <circle class="pad-part pad-fixed" cx="260" cy="98" r="14"/>
+        <!-- Select und Start -->
+        <circle class="pad-part pad-btn" data-btn="8" cx="222" cy="130" r="9"/>
+        <circle class="pad-part pad-btn" data-btn="9" cx="298" cy="130" r="9"/>
+        <!-- Linker Stick (L3) -->
+        <circle class="pad-part pad-ring" data-part="lstick" cx="132" cy="132" r="34"/>
+        <circle class="pad-part pad-btn" data-btn="10" cx="132" cy="132" r="22"/>
+        <text class="pad-label" x="132" y="137">L3</text>
+        <!-- Steuerkreuz (fest) -->
+        <path class="pad-part pad-fixed" data-part="dpad" d="M196 190 h18 v18 h18 v18 h-18 v18 h-18 v-18 h-18 v-18 h18 Z" transform="translate(-8 -12)"/>
+        <!-- Rechter Stick (R3) -->
+        <circle class="pad-part pad-ring" cx="318" cy="212" r="34"/>
+        <circle class="pad-part pad-btn" data-btn="11" cx="318" cy="212" r="22"/>
+        <text class="pad-label" x="318" y="217">R3</text>
+        <!-- Aktionstasten A B X Y -->
+        <circle class="pad-part pad-btn pad-face face-y" data-btn="3" cx="390" cy="96" r="17"/>
+        <circle class="pad-part pad-btn pad-face face-x" data-btn="2" cx="358" cy="128" r="17"/>
+        <circle class="pad-part pad-btn pad-face face-b" data-btn="1" cx="422" cy="128" r="17"/>
+        <circle class="pad-part pad-btn pad-face face-a" data-btn="0" cx="390" cy="160" r="17"/>
+        <text class="pad-label pad-face-label" x="390" y="102">Y</text>
+        <text class="pad-label pad-face-label" x="358" y="134">X</text>
+        <text class="pad-label pad-face-label" x="422" y="134">B</text>
+        <text class="pad-label pad-face-label" x="390" y="166">A</text>
+      </svg>
+      <p class="pad-caption" id="pad-caption"></p>
+    </div>
+  </div>
+
+  <!-- Hinweise unten rechts (mit den aktuell belegten Tasten für Bestätigen und Zurück) -->
+  <div class="pad-hints" id="pad-hints"></div>
+</body>
+</html>

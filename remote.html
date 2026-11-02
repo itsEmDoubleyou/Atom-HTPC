@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smartphone</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur muss ihre Tasten-Handler VOR nav.js und dem
+       Seiten-Skript registrieren, damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="lib/qrcode/qrcode.js" defer></script>
+  <script src="nav.js" defer></script>
+  <script src="remote.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel remote-panel">
+    <h1 class="menu-title">Smartphone</h1>
+    <p class="manage-hint">Steuere den Launcher mit dem Smartphone: Touchfläche, Zurück, Home, Wiedergabe, Lautstärke und Tastatur. Es wird nichts auf dem Smartphone installiert, es genügt der Browser im selben WLAN.</p>
+
+    <div class="storage-row remote-switch-row">
+      <div class="storage-text">
+        <div class="storage-title">Smartphone-Steuerung</div>
+        <div class="storage-desc" id="remote-state">&nbsp;</div>
+      </div>
+      <button type="button" class="profile-delete" id="remote-toggle">Einschalten</button>
+    </div>
+
+    <div id="remote-details" hidden>
+      <div class="remote-connect">
+        <div class="remote-qr" id="remote-qr" aria-label="QR-Code zum Verbinden"></div>
+        <div class="remote-connect-text">
+          <div class="storage-title">Mit dem Smartphone verbinden</div>
+          <div class="storage-desc">Kamera-App des Smartphones auf den QR-Code richten und den Link öffnen. Das Smartphone muss im selben WLAN sein.</div>
+          <div class="remote-url" id="remote-url"></div>
+          <div class="image-source-row remote-copy-row"><button type="button" id="remote-copy">Link kopieren</button></div>
+          <select id="remote-address" aria-label="Netzwerk wählen" hidden></select>
+          <div class="storage-size" id="remote-connection">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="storage-row">
+        <div class="storage-text">
+          <div class="storage-title">Port</div>
+          <div class="storage-desc">Nur ändern, wenn der Standard von einem anderen Programm belegt ist.</div>
+          <div class="image-source-row remote-port-row">
+            <input type="text" id="remote-port" inputmode="numeric" maxlength="5" autocomplete="off" spellcheck="false" aria-label="Port" />
+            <button type="button" id="remote-port-save">Übernehmen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="storage-row">
+        <div class="storage-text">
+          <div class="storage-title">Neuen Code erzeugen</div>
+          <div class="storage-desc">Der alte QR-Code und Link werden ungültig, das verbundene Smartphone wird getrennt.</div>
+        </div>
+        <button type="button" class="profile-delete" id="remote-renew">Erneuern</button>
+      </div>
+    </div>
+
+    <div class="pad-section-title">Touchfläche am Smartphone</div>
+    <div class="slider-row">
+      <label for="remote-pointer-speed">Zeiger-Geschwindigkeit</label>
+      <span class="slider-value" id="remote-pointer-speed-value">100 %</span>
+    </div>
+    <input type="range" id="remote-pointer-speed" class="settings-slider" min="30" max="300" step="10" value="100" />
+    <p class="slider-hint">Wie schnell der Zeiger in Apps und das Scrollen dem Finger folgen.</p>
+
+    <div class="slider-row">
+      <label for="remote-swipe-speed">Wisch-Geschwindigkeit</label>
+      <span class="slider-value" id="remote-swipe-speed-value">100 %</span>
+    </div>
+    <input type="range" id="remote-swipe-speed" class="settings-slider" min="50" max="200" step="10" value="100" />
+    <p class="slider-hint">Wie weit man wischen muss, bis der Fokus ein Element weiterspringt. Höher = kürzere Strecke.</p>
+
+    <div class="adblocker-row">
+      <span>Schwung beim Wischen</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="remote-momentum" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <p class="slider-hint">An: Ein schneller Wisch darf mehrere Elemente überspringen. Aus: Ein Wisch bewegt den Fokus höchstens ein Element weiter. Im Bildschirmschoner und im Topshelf springt ein Wisch immer nur ein Element weiter.</p>
+
+    <div class="slider-row">
+      <label for="remote-momentum-max">Höchstens übersprungene Apps</label>
+      <span class="slider-value" id="remote-momentum-max-value">3</span>
+    </div>
+    <input type="range" id="remote-momentum-max" class="settings-slider" min="1" max="10" step="1" value="3" />
+    <p class="slider-hint">So viele Elemente darf ein schneller Wisch zusätzlich zum ersten überspringen.</p>
+
+    <p class="storage-status" id="remote-status" role="status" aria-live="polite"></p>
+    <p class="manage-hint remote-ios">Zeigt Safari am iPhone eine Fehlermeldung zu „HTTPS-Only“, die Adresse in Safari einmal mit <b>http://</b> davor eintippen (oder den Link kopieren und dort einfügen). Danach über „Teilen → Zum Home-Bildschirm“ ein Symbol anlegen: Es öffnet die Fernbedienung des Launchers künftig direkt, ohne QR-Code.</p>
+    <p class="manage-hint remote-firewall">Beim ersten Einschalten fragt die Windows-Firewall, ob der Zugriff erlaubt wird: bitte „Private Netzwerke“ zulassen.</p>
+  </div>
+
+</body>
+</html>

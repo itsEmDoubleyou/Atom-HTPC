@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taskleiste</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="nav.js" defer></script>
+  <script src="taskbar.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel">
+    <h1 class="menu-title">Taskleiste</h1>
+    <p class="manage-hint">Blendet die Windows-Taskleiste aus, solange der Launcher läuft. Beim Beenden wird sie wieder eingeblendet.</p>
+
+    <div class="adblocker-row">
+      <span>Taskleiste ausblenden</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="taskbar-hide-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <p class="manage-hint" id="taskbar-unavailable" hidden>Nur unter Windows verfügbar.</p>
+
+    <div class="form-actions">
+      <div></div>
+      <div class="form-actions-right">
+        <button type="button" id="general-save">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

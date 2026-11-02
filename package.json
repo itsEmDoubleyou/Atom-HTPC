@@ -1,0 +1,91 @@
+{
+  "name": "atom",
+  "productName": "Atom",
+  "version": "0.1.0-beta.1",
+  "description": "Atom - Medialauncher im tvOS-Stil für den Fernseher (Controller, Handy-Fernbedienung, Kiosk-Modus)",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "node node_modules/electron/install.js",
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis portable --x64 --publish never",
+    "dist:linux": "electron-builder --linux AppImage --x64 --publish never"
+  },
+  "keywords": [],
+  "author": "itsEmDoubleyou",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "@ghostery/adblocker": "^2.20.1",
+    "@ghostery/adblocker-electron": "^2.20.1",
+    "cross-fetch": "^4.1.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "electron": "github:castlabs/electron-releases#v44.5.1+wvcus",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "de.itsemdoubleyou.atom",
+    "productName": "Atom",
+    "electronVersion": "44.5.1",
+    "electronDist": "node_modules/electron/dist",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!build/**",
+      "!dist/**",
+      "!.github/**",
+      "!README.md",
+      "!.gitignore"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Atom-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Atom-Portable-${version}.${ext}"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "AudioVideo",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Atom-${version}.${ext}",
+      "syncDesktopName": true
+    },
+    "publish": null
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsEmDoubleyou/Atom-HTPC.git"
+  },
+  "desktopName": "Atom.desktop"
+}

@@ -1,0 +1,242 @@
+/* Fernbedienung im Stil der tvOS-Fernbedienung: schwarz, große Touchfläche oben, darunter Play/Pause, Zurück und Home */
+:root {
+  --bg: #000;
+  --pad: #1c1c1e;
+  --pad-line: rgba(255, 255, 255, 0.05);
+  --btn: #0c0c0d;
+  --btn-line: #1c1c1e;
+  --btn-down: #2a2a2d;
+  --icon: #8e8e93;
+  --icon-down: #d1d1d6;
+  --text: #f2f2f7;
+  --muted: rgba(235, 235, 245, 0.55);
+  --grey-btn: #5a5a5e;
+  --ok: #30d158;
+  --warn: #ff9f0a;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+body { position: fixed; inset: 0; overflow: hidden; }
+
+.remote {
+  height: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+/* ---------- Kopfzeile ---------- */
+.top {
+  flex: none;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #636366;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.remote[data-conn="open"] .dot { background: var(--ok); box-shadow: 0 0 8px rgba(48, 209, 88, 0.6); }
+.remote[data-conn="connecting"] .dot { background: var(--warn); }
+.kb-btn {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border: 0; border-radius: 20px;
+  background: transparent; color: var(--icon);
+  display: flex; align-items: center; justify-content: center;
+}
+.kb-btn:active, .vol-btn:active { color: var(--icon-down); }
+.vol-btn {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border: 0; border-radius: 20px;
+  background: transparent; color: var(--icon);
+  display: flex; align-items: center; justify-content: center;
+}
+.vol-btn .vol-slash { display: none; }
+.vol-btn[aria-pressed="false"] .vol-slash { display: block; }
+.vol-btn[aria-pressed="false"] .vol-wave { opacity: 0.35; }
+/* Regler ausgeblendet: seine Spalte (samt Abstand) klappt zu, die Touchfläche wächst bis auf denselben Randabstand wie rechts */
+.volume.hidden { width: 0; margin-right: -10px; opacity: 0; visibility: hidden; pointer-events: none; transition: width 0.22s ease, margin-right 0.22s ease, opacity 0.15s ease, visibility 0s linear 0.22s; }
+
+/* ---------- Touchfläche und Lautstärke ---------- */
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pad {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  border-radius: 44px;
+  background: var(--pad);
+  border: 1px solid var(--pad-line);
+  overflow: hidden;
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+.pad .glow {
+  position: absolute; left: 0; top: 0; width: 220px; height: 220px; margin: -110px 0 0 -110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 70%);
+  opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
+  will-change: transform, opacity;
+}
+.pad.touching .glow { opacity: 1; transition-duration: 0.05s; }
+.chip {
+  position: absolute; left: 18px; top: 16px; padding: 5px 11px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12); color: var(--text); font-size: 0.74rem; font-weight: 600;
+  pointer-events: none;
+}
+.hint {
+  position: absolute; left: 0; right: 0; bottom: 20px; text-align: center; font-size: 0.78rem; color: var(--muted);
+  opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+}
+.hint.show { opacity: 1; }
+
+/* Lautstärke: dünner Streifen links, wird beim Anfassen dicker */
+.volume {
+  flex: none;
+  position: relative;
+  width: 34px;
+  display: flex;
+  justify-content: center;
+  touch-action: none;
+  overflow: hidden;
+  transition: width 0.22s ease, margin-right 0.22s ease, opacity 0.2s ease;
+}
+.volume { align-items: center; }
+.vol-box {
+  position: relative;
+  width: 100%;
+  height: calc((100% - 52px) / 2);  /* halb so lang wie die Touchfläche, mittig am linken Rand */
+  min-height: 120px;
+  display: flex;
+  justify-content: center;
+}
+.vol-track {
+  align-self: stretch;
+  width: 7px;
+  border-radius: 4px;
+  background: #2c2c2e;
+  overflow: hidden;
+  position: relative;
+  transition: width 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.18s ease, background 0.18s ease;
+}
+.volume.active .vol-track { width: 30px; border-radius: 15px; background: #3a3a3d; }
+.vol-fill {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 100%;
+  background: #d1d1d6; border-radius: inherit;
+  transform-origin: bottom;
+}
+.vol-label {
+  position: absolute; left: 50%; top: -22px; transform: translateX(-50%);
+  font-size: 0.72rem; font-weight: 600; color: var(--muted); opacity: 0; transition: opacity 0.2s ease;
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.volume.active .vol-label, .volume.recent .vol-label { opacity: 1; }
+
+/* Verbindungs-Hinweis auf der Touchfläche (wie bei der tvOS-Fernbedienung) */
+.overlay {
+  position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 28px; text-align: center; background: var(--pad);
+}
+.remote:not([data-conn="open"]) .overlay { display: flex; }
+.remote:not([data-conn="open"]) .glow, .remote:not([data-conn="open"]) .chip { display: none; }
+.overlay p { margin: 0; font-size: 1.12rem; line-height: 1.35; max-width: 20em; }
+.overlay-btn {
+  width: min(100%, 320px); padding: 15px 18px; border: 0; border-radius: 14px;
+  background: var(--grey-btn); color: #fff; font: inherit; font-size: 1.1rem; font-weight: 700;
+}
+.overlay-btn:active { background: #707075; }
+
+/* ---------- Tasten unten ---------- */
+.buttons {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 6px 8px;
+}
+.round {
+  border: 1px solid var(--btn-line);
+  background: var(--btn);
+  color: var(--icon);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  touch-action: none;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease;
+}
+.round.side { width: clamp(76px, 24vw, 100px); height: clamp(76px, 24vw, 100px); }
+.round.center { width: clamp(112px, 35vw, 150px); height: clamp(112px, 35vw, 150px); }
+.round.down { background: var(--btn-down); color: var(--icon-down); transform: scale(0.96); }
+.round svg { pointer-events: none; }
+
+/* ---------- Tastatur-Blatt ---------- */
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(28, 28, 30, 0.96);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px 22px 0 0;
+  transform: translateY(var(--kb-shift, 0px));
+}
+.sheet[hidden] { display: none; }
+.sheet-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sheet-label { font-size: 0.85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-done { border: 0; background: transparent; color: #0a84ff; font: inherit; font-weight: 600; font-size: 1rem; padding: 4px 6px; }
+.sheet-input {
+  width: 100%; padding: 13px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0c0c0d; color: var(--text); font: inherit; font-size: 1.05rem; outline: none;
+  -webkit-user-select: text; user-select: text;
+}
+.sheet-input:focus { border-color: #0a84ff; }
+
+
+/* ---------- Einmaliger Tipp: Zum Home-Bildschirm ---------- */
+.a2hs {
+  position: absolute;
+  left: 12px; right: 12px; top: 12px;
+  z-index: 4;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #2c2c2e;
+  color: var(--text);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.a2hs[hidden] { display: none; }
+.a2hs p { margin: 0 0 10px; }
+.a2hs-close {
+  appearance: none; border: 0; cursor: pointer;
+  padding: 8px 16px; border-radius: 999px;
+  background: #0a84ff; color: #fff; font: inherit; font-weight: 600;
+}

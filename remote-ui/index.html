@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fernbedienung">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
+  <link rel="stylesheet" href="remote.css">
+  <title>Fernbedienung</title>
+</head>
+<body>
+  <main class="remote" id="remote" data-conn="connecting">
+    <header class="top">
+      <button class="vol-btn" id="vol-btn" type="button" aria-label="Lautstärkeregler ein-/ausblenden" aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" fill-opacity="0.15"/>
+          <path class="vol-wave" d="M15.2 9.2a4 4 0 0 1 0 5.6M17.6 6.8a7.4 7.4 0 0 1 0 10.4"/>
+          <path class="vol-slash" d="M4 4l16 16"/>
+        </svg>
+      </button>
+      <span class="dot" id="dot" aria-hidden="true"></span>
+      <span class="top-title" id="top-title">Medialauncher</span>
+      <button class="kb-btn" id="kb-btn" type="button" aria-label="Tastatur" hidden>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="6" width="19" height="12" rx="2.4"/>
+          <path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7.5 14.5h9"/>
+        </svg>
+      </button>
+    </header>
+
+    <section class="stage">
+      <div class="volume hidden" id="volume" role="slider" aria-label="Lautstärke" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="-1">
+        <div class="vol-box">
+          <div class="vol-track"><div class="vol-fill" id="vol-fill"></div></div>
+          <div class="vol-label" id="vol-label">100</div>
+        </div>
+      </div>
+
+      <div class="pad" id="pad" aria-label="Touchfläche">
+        <div class="glow" id="glow" aria-hidden="true"></div>
+        <div class="chip" id="chip" hidden>Zeiger</div>
+        <div class="hint" id="hint" aria-hidden="true"></div>
+
+        <div class="a2hs" id="a2hs" hidden>
+          <p><b>Tipp:</b> Tippe unten in Safari auf „Teilen“ und wähle „Zum Home-Bildschirm“. Dann startest du die Fernbedienung per Symbol, ohne den QR-Code zu scannen.</p>
+          <button type="button" class="a2hs-close" id="a2hs-close">Verstanden</button>
+        </div>
+
+        <div class="overlay" id="overlay">
+          <p id="overlay-text">Verbinde …</p>
+          <button type="button" class="overlay-btn" id="overlay-btn" hidden>Verbinden</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="buttons" aria-label="Tasten">
+      <button type="button" class="round side" id="btn-play" aria-label="Wiedergabe / Pause">
+        <svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><path d="M6.5 9.5v21L21 20z" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><rect x="26" y="8.5" width="3.6" height="23" rx="1.2" fill="currentColor"/><rect x="33" y="8.5" width="3.6" height="23" rx="1.2" fill="currentColor"/></svg>
+      </button>
+      <button type="button" class="round center" id="btn-back" aria-label="Zurück">
+        <svg viewBox="0 0 40 40" width="56" height="56" aria-hidden="true"><path d="M25 6 11 20l14 14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="round side" id="btn-home" aria-label="Home">
+        <svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><rect x="5" y="7" width="30" height="20" rx="3.2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M13 33h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-bar">
+      <span class="sheet-label" id="sheet-label">Text eingeben</span>
+      <button type="button" class="sheet-done" id="sheet-done">Fertig</button>
+    </div>
+    <input class="sheet-input" id="sheet-input" type="text" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Text für das Textfeld am Fernseher">
+  </div>
+
+  <script src="remote.js"></script>
+</body>
+</html>

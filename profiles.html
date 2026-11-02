@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur muss ihre Tasten-Handler VOR nav.js und dem Seiten-Skript registrieren,
+       damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="nav.js" defer></script>
+  <script src="profiles-page.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+  <div class="general-panel profiles-panel">
+    <h1 class="menu-title">Profile</h1>
+    <p class="manage-hint">Jedes Profil hat eigenes Dock, eigenen Hintergrund, Bildschirmschoner und eigene Anmeldungen. Gewechselt wird im Schnellmenü.</p>
+
+    <div class="profile-list" id="profile-list">
+      <!-- Die Profile werden per JS eingefügt -->
+    </div>
+
+    <button type="button" class="profile-add" id="profile-add">+ Profil hinzufügen</button>
+    <p class="profile-limit-note" id="profile-limit-note"></p>
+
+    <div class="profile-startup">
+      <label for="profile-startup">Beim Start</label>
+      <select id="profile-startup">
+        <option value="last">Zuletzt benutztes Profil</option>
+        <option value="choose">Profilauswahl anzeigen</option>
+      </select>
+    </div>
+
+    <p class="profile-status" id="profile-status"></p>
+  </div>
+</body>
+</html>

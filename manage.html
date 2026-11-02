@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>App-Verwaltung</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="lib/simple-keyboard/index.css" />
+  <!-- Reihenfolge wichtig: Die Bildschirmtastatur muss ihre Tasten-Handler VOR nav.js und dem
+       Seiten-Skript registrieren, damit sie Controller-Tasten zuerst bekommt (und verschlucken kann). -->
+  <script src="lib/simple-keyboard/index.js" defer></script>
+  <script src="virtual-keyboard.js" defer></script>
+  <script src="nav.js" defer></script>
+  <script src="manage.js" defer></script>
+</head>
+<body class="settings-page fade-in">
+  <div id="background" class="settings-background"></div>
+
+
+  <div class="manage-panel">
+    <h1 class="menu-title">App-Verwaltung</h1>
+    <p class="manage-hint">Ziehen zum Sortieren · Klicken zum Bearbeiten</p>
+    <div class="manage-grid" id="manage-grid">
+      <!-- Bestehende Apps + Plus-Kachel werden per JS eingefügt -->
+    </div>
+  </div>
+
+  <!-- Formular-Overlay zum Hinzufügen/Bearbeiten -->
+  <div class="modal-overlay" id="form-overlay">
+    <div class="app-form">
+      <h2 id="form-title">App hinzufügen</h2>
+
+      <label for="form-template">Vorlage (optional)</label>
+      <select id="form-template">
+        <option value="">— Eigene App —</option>
+        <option value="netflix">Netflix</option>
+        <option value="paramount">Paramount+</option>
+        <option value="youtube">YouTube</option>
+        <option value="disney">Disney+</option>
+        <option value="primevideo">Amazon Prime</option>
+        <option value="appletv">Apple TV</option>
+        <option value="spotify">Spotify</option>
+        <option value="discord">Discord</option>
+        <option value="ard">ARD Mediathek</option>
+        <option value="zdf">ZDF Mediathek</option>
+        <option value="arte">Arte Mediathek</option>
+        <option value="browser">Browser</option>
+      </select>
+
+      <label for="form-name">Name</label>
+      <input type="text" id="form-name" placeholder="z.B. Netflix" />
+
+      <label>App-Typ</label>
+      <div class="mode-toggle">
+        <button type="button" class="mode-btn active" id="type-web">Web-App</button>
+        <button type="button" class="mode-btn" id="type-browser">Browser</button>
+        <button type="button" class="mode-btn" id="type-native">Programm (lokal)</button>
+      </div>
+
+      <div id="url-field-group">
+        <label for="form-url">URL</label>
+        <input type="text" id="form-url" placeholder="https://..." />
+      </div>
+
+      <div id="program-field-group" class="hidden-field-group">
+        <label for="form-program-path">Programmpfad</label>
+        <div class="image-source-row">
+          <input type="text" id="form-program-path" placeholder="z.B. C:\Programme\Beispiel\programm.exe" />
+          <button type="button" id="form-program-file">Datei wählen…</button>
+        </div>
+
+        <label for="form-program-args">Startparameter (optional)</label>
+        <input type="text" id="form-program-args" placeholder="z.B. -bigpicture" />
+      </div>
+
+      <label for="form-icon-url">Icon-Bild</label>
+      <div class="image-source-row">
+        <input type="text" id="form-icon-url" placeholder="Bild-URL einfügen" />
+        <button type="button" id="form-icon-file">Datei wählen…</button>
+      </div>
+      <img id="form-icon-preview" class="image-preview" alt="Icon-Vorschau" />
+
+      <label for="form-bg-url">Hintergrundbild (optional)</label>
+      <div class="image-source-row">
+        <input type="text" id="form-bg-url" placeholder="Bild-URL einfügen" />
+        <button type="button" id="form-bg-file">Datei wählen…</button>
+      </div>
+      <img id="form-bg-preview" class="image-preview" alt="Hintergrund-Vorschau" />
+
+      <div id="topshelf-field-group">
+        <label for="form-tmdb-provider">TMDb-Anbieter (für Topshelf &amp; dynamischen Hintergrund)</label>
+        <select id="form-tmdb-provider">
+          <option value="">— Keiner —</option>
+          <option value="8">Netflix</option>
+          <option value="337">Disney+</option>
+          <option value="119">Amazon Prime Video</option>
+          <option value="350">Apple TV+</option>
+          <option value="531">Paramount+</option>
+          <option value="1899">Max</option>
+          <option value="192">YouTube</option>
+        </select>
+
+        <label for="form-topshelf-mode">Topshelf (Vorschau beim Fokussieren im Dock)</label>
+        <select id="form-topshelf-mode">
+          <option value="off">Aus</option>
+          <option value="cards">Fenster über dem Dock</option>
+          <option value="fullscreen">Vollbild (Parallax)</option>
+        </select>
+
+        <div class="adblocker-row">
+          <span>Dynamischer Hintergrund (aktuell beliebte Inhalte dieses Diensts)</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="form-dynamic-bg-toggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div id="loading-style-group">
+        <label for="form-loading-style">Ladebildschirm</label>
+        <select id="form-loading-style">
+          <option value="bar">Minimalistischer Balken</option>
+          <option value="default">Logo-Spinner + Text</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="form-delete" class="form-delete-btn">Löschen</button>
+        <div class="form-actions-right">
+          <button type="button" id="form-cancel">Abbrechen</button>
+          <button type="button" id="form-save">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
